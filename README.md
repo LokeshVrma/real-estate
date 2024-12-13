@@ -23,6 +23,11 @@ Realestate is a web application to rent properties online.
     - **email**: admin@gmail.com
     - **password**: admin123
 
+## ScreenShots
+![Screenshot 2024-12-13 193140](https://github.com/user-attachments/assets/9c14f044-8225-4a28-b6a6-b4b5ed1c1892)
+![Screenshot 2024-12-13 193128](https://github.com/user-attachments/assets/54ee711a-0702-48d1-b451-43bd3036556c)
+![Screenshot 2024-12-13 193112](https://github.com/user-attachments/assets/8b2aa5bc-9e1d-414a-8a30-41ab3f3062d3)
+
 ## Setup and Installation
 
 ### Prerequisites
