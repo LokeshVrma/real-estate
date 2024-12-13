@@ -7,7 +7,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://192.168.31.35:5000',
+        target: 'https://real-estate-production-69eb.up.railway.app/',
         changeOrigin: true,
       },
     },
