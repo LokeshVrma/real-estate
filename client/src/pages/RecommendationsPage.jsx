@@ -15,7 +15,7 @@ function RecommendationsPage() {
       }
 
       try {
-        const response = await fetch("/api/properties", {
+        const response = await fetch("https://real-estate-production-69eb.up.railway.app/api/properties", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -8,7 +8,7 @@ function PropertyListings() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("api/properties");
+        const response = await fetch("https://real-estate-production-69eb.up.railway.app/api/properties");
         if (!response.ok) {
           throw new Error("Failed to fetch properties");
         }
