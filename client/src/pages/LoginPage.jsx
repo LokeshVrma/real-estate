@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
 
 function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -76,6 +77,15 @@ function LoginPage() {
             {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
+        {/* Navigation to register page */}
+        <div className="mt-4 text-center">
+          <p>
+            Dont have an account?{" "}
+            <Link to="/login" className="text-blue-500 hover:underline">
+              Register here
+            </Link>
+          </p>
+        </div>
       </div>
       <ToastContainer />
     </div>
