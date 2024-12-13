@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install-frontend": "cd client && npm install",
+    "build-frontend": "cd client && vite build",
+    "start-frontend": "vite"
   },
   "keywords": [],
   "author": "",
