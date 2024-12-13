@@ -5,6 +5,10 @@ const { recommendProperties } = require('../utils/aiRecommendation');
 const getAllProperties = async (req, res) => {
     try {
         const properties = await Property.find();
+
+        if(!properties) {
+            return res.status(404).json({ message:'No properties found' })
+        }
         res.status(200).json(properties);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch properties' });
