@@ -1,10 +1,85 @@
-import { useEffect, useState } from "react";
-import { FaStar } from "react-icons/fa"; // For rating stars
+import { useEffect, useState, Suspense } from "react";
+import { Link } from "react-router-dom"; // Import Link only once
+import { FaArrowRight } from "react-icons/fa"; // For the "View Details" icon
 
+// Property Card Component
+const PropertyCard = ({ property, handleUserInteraction }) => {
+  return (
+    <div
+      key={property._id}
+      className="bg-white shadow-xl rounded-lg overflow-hidden hover:shadow-2xl transition-transform transform hover:scale-105"
+    >
+      {/* Image Section with Lazy Loading */}
+      {property.images && property.images.length > 0 ? (
+        <Link to={`/property/${property._id}`}>
+          <img
+            src={property.images[0]}
+            alt={property.name}
+            className="w-full h-48 object-cover rounded-t-lg"
+            onClick={() => handleUserInteraction(property._id, "view")}
+            loading="lazy"
+          />
+        </Link>
+      ) : (
+        <div className="w-full h-48 bg-gray-300 flex items-center justify-center rounded-t-lg">
+          <p className="text-gray-500">No Image Available</p>
+        </div>
+      )}
+
+      {/* Content Section */}
+      <div className="p-4">
+        {/* Title with Link */}
+        <h2 className="text-xl font-semibold text-gray-800 hover:text-blue-600 transition duration-300">
+          <Link to={`/property/${property._id}`}>{property.name}</Link>
+        </h2>
+        <p className="text-gray-600">{property.location}</p>
+        <p className="text-gray-900 font-bold mt-2">${property.price}</p>
+        <p className="text-sm text-gray-700 mt-1">
+          Type: <span className="font-medium">{property.type}</span>
+        </p>
+
+        {/* "View Details" Section */}
+        <div className="mt-4 flex items-center justify-between">
+          <Link
+            to={`/property/${property._id}`}
+            className="text-blue-600 hover:text-blue-800 font-medium flex items-center"
+            onClick={() => handleUserInteraction(property._id, "view")}
+          >
+            <span>View Details</span>
+            <FaArrowRight className="ml-2 text-sm" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Property Listings Component
 function PropertyListings() {
   const [properties, setProperties] = useState([]);
   const [error, setError] = useState("");
+  
+  // Handle user interaction (view or like)
+  const handleUserInteraction = async (propertyId, action) => {
+    try {
+      // Assuming you're calling your API to handle user interaction here
+      const response = await fetch("https://real-estate-production-69eb.up.railway.app/api/user-interaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: "exampleUserId", propertyId, action }),
+      });
 
+      if (!response.ok) {
+        throw new Error("Failed to update user interaction");
+      }
+    } catch (err) {
+      console.error("Error updating user interaction:", err);
+    }
+  };
+
+  // Fetch properties data
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -22,121 +97,22 @@ function PropertyListings() {
     fetchProperties();
   }, []);
 
-  const handleUserInteraction = async (propertyId, action) => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      // Redirect user to login if not authenticated
-      window.location.href = "/login";
-      return;
-    }
-
-    try {
-      const response = await fetch("https://real-estate-production-69eb.up.railway.app/api/properties/interaction", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,  
-        },
-        body: JSON.stringify({
-          userId: "current",  // Replace with actual user ID (from context or global state)
-          propertyId,
-          action,  // Either "view" or "like"
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data.message);  // Handle success (e.g., show success toast)
-      } else {
-        const errorData = await response.json();
-        console.error(errorData.error);  // Handle error (e.g., show error message)
-      }
-    } catch (err) {
-      console.error("Error interacting with property:", err);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-extrabold text-center mb-6 text-gray-800">
         Explore Properties
       </h1>
       {error && <p className="text-red-500 text-center">{error}</p>}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {properties.map((property) => (
-          <div
-            key={property._id}
-            className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition"
-          >
-            {/* Image Section */}
-            {property.images && property.images.length > 0 ? (
-              <img
-                src={property.images[0]}
-                alt={property.name}
-                className="w-full h-48 object-cover"
-                onClick={() => handleUserInteraction(property._id, "view")} // Trigger "view" on image click
-              />
-            ) : (
-              <div className="w-full h-48 bg-gray-300 flex items-center justify-center">
-                <p className="text-gray-500">No Image Available</p>
-              </div>
-            )}
-
-            {/* Content Section */}
-            <div className="p-4">
-              <h2 className="text-lg font-semibold text-gray-800">{property.name}</h2>
-              <p className="text-gray-600">{property.location}</p>
-              <p className="text-gray-900 font-bold mt-2">${property.price}</p>
-              <p className="text-sm text-gray-700 mt-1">
-                Type: <span className="font-medium">{property.type}</span>
-              </p>
-
-              {/* Features */}
-              {property.features && property.features.length > 0 && (
-                <div className="flex flex-wrap mt-2">
-                  {property.features.slice(0, 3).map((feature, index) => (
-                    <span
-                      key={index}
-                      className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2 mb-2"
-                    >
-                      {feature}
-                    </span>
-                  ))}
-                  {property.features.length > 3 && (
-                    <span className="text-xs bg-gray-200 px-2 py-1 rounded-full">
-                      +{property.features.length - 3} more
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Rating and Views */}
-              <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center">
-                  <FaStar className="text-yellow-400 mr-1" />
-                  <span className="text-gray-700 text-sm">{property.rating.toFixed(1)}</span>
-                </div>
-                <p className="text-sm text-gray-500">{property.views} views</p>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-between mt-4">
-                <button
-                  onClick={() => handleUserInteraction(property._id, "like")}
-                  className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 w-full transition"
-                >
-                  Like
-                </button>
-                <button
-                  onClick={() => handleUserInteraction(property._id, "view")}
-                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full transition"
-                >
-                  View
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-6">
+        <Suspense fallback={<div className="text-center">Loading properties...</div>}>
+          {properties.map((property) => (
+            <PropertyCard
+              key={property._id}
+              property={property}
+              handleUserInteraction={handleUserInteraction} // Pass function as prop
+            />
+          ))}
+        </Suspense>
       </div>
     </div>
   );

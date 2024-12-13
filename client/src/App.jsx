@@ -4,6 +4,7 @@ import RegisterPage from './pages/RegisterPage'
 import HomePage from "./pages/HomePage";
 import RecommendationsPage from "./pages/RecommendationsPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import PropertyDetailPage from "./pages/PropertyDetailPage";
 import { AuthProvider } from "./contexts/AuthContext"
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/recommendations" element={<RecommendationsPage />} />
+        <Route path="/property/:propertyId" element={<PropertyDetailPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

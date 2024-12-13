@@ -103,6 +103,22 @@ const handleUserInteraction = async (req, res) => {
     }
 };
 
+// Get property by id
+const getPropertyById = async (req, res) => {
+    const { propertyId } = req.params; // Extract propertyId from the URL
 
+    try {
+        const property = await Property.findById(propertyId);
 
-module.exports = { getAllProperties, getRecommendedProperties, handleUserInteraction };
+        if (!property) {
+            return res.status(404).json({ error: 'Property not found' });
+        }
+
+        res.status(200).json(property);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch property details' });
+    }
+};
+
+module.exports = { getAllProperties, getRecommendedProperties, handleUserInteraction, getPropertyById };
