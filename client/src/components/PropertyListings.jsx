@@ -22,6 +22,40 @@ function PropertyListings() {
     fetchProperties();
   }, []);
 
+  const handleUserInteraction = async (propertyId, action) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      // Redirect user to login if not authenticated
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      const response = await fetch("https://real-estate-production-69eb.up.railway.app/api/properties/interaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,  
+        },
+        body: JSON.stringify({
+          userId: "current",  // Replace with actual user ID (from context or global state)
+          propertyId,
+          action,  // Either "view" or "like"
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.message);  // Handle success (e.g., show success toast)
+      } else {
+        const errorData = await response.json();
+        console.error(errorData.error);  // Handle error (e.g., show error message)
+      }
+    } catch (err) {
+      console.error("Error interacting with property:", err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-extrabold text-center mb-6 text-gray-800">
@@ -40,6 +74,7 @@ function PropertyListings() {
                 src={property.images[0]}
                 alt={property.name}
                 className="w-full h-48 object-cover"
+                onClick={() => handleUserInteraction(property._id, "view")} // Trigger "view" on image click
               />
             ) : (
               <div className="w-full h-48 bg-gray-300 flex items-center justify-center">
@@ -49,9 +84,7 @@ function PropertyListings() {
 
             {/* Content Section */}
             <div className="p-4">
-              <h2 className="text-lg font-semibold text-gray-800">
-                {property.name}
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-800">{property.name}</h2>
               <p className="text-gray-600">{property.location}</p>
               <p className="text-gray-900 font-bold mt-2">${property.price}</p>
               <p className="text-sm text-gray-700 mt-1">
@@ -81,16 +114,26 @@ function PropertyListings() {
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center">
                   <FaStar className="text-yellow-400 mr-1" />
-                  <span className="text-gray-700 text-sm">
-                    {property.rating.toFixed(1)}
-                  </span>
+                  <span className="text-gray-700 text-sm">{property.rating.toFixed(1)}</span>
                 </div>
                 <p className="text-sm text-gray-500">{property.views} views</p>
               </div>
 
-              <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full transition">
-                View Details
-              </button>
+              {/* Action Buttons */}
+              <div className="flex justify-between mt-4">
+                <button
+                  onClick={() => handleUserInteraction(property._id, "like")}
+                  className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 w-full transition"
+                >
+                  Like
+                </button>
+                <button
+                  onClick={() => handleUserInteraction(property._id, "view")}
+                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full transition"
+                >
+                  View
+                </button>
+              </div>
             </div>
           </div>
         ))}
