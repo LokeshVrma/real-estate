@@ -20,6 +20,10 @@ connectDB();
 app.use('/api/auth', authRoutes);
 app.use('/api/properties', propertyRoutes);
 
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Backend is up and running' });
+})
+
 // Start the server
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
